@@ -11,7 +11,7 @@ public class AboutCanada {
     private String title;
     @SerializedName("rows")
     @Expose
-    private List<Row> rows = null;
+    private List<Item> items = null;
 
     public String getTitle() {
         return title;
@@ -21,12 +21,12 @@ public class AboutCanada {
         this.title = title;
     }
 
-    public List<Row> getRows() {
-        return rows;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void setRows(List<Row> rows) {
-        this.rows = rows;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 
 }
