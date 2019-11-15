@@ -9,8 +9,7 @@ Followed google suggested architecture
 
 Offline support
 
-![alt text](https://user-images.githubusercontent.com/40615535/68910123-c02e0c00-0776-11ea-9a36-57ef012aba2d.jpeg)
-
+![screenshot](https://user-images.githubusercontent.com/40615535/68910410-b22cbb00-0777-11ea-88d1-45cf26e3f3c2.jpeg)
 
 
 
