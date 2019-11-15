@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,6 +70,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.RepoVi
 
             holder.textViewDescription.setText(current.getDescription());
 
+            if(URLUtil.isValidUrl(current.getImageHref()))
             Glide.with(mContext).load(current.getImageHref()).into(holder.imageView);
 
         } else {
