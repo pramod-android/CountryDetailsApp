@@ -7,6 +7,10 @@ Used following libs
 
 Followed google suggested architecture
 
+Offline support
+
+https://user-images.githubusercontent.com/40615535/68910123-c02e0c00-0776-11ea-9a36-57ef012aba2d.jpeg
+
 
 
 
