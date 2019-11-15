@@ -47,5 +47,7 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitRxJavaGson"
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitRxJavaGson"
 
-
+    //Glide
+    implementation "com.github.bumptech.glide:glide:$rootProject.glide"
+    annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.glide"
 }

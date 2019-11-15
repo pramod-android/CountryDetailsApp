@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.mywork.countrydetailsapp.R;
 import com.mywork.countrydetailsapp.entity.Item;
 
@@ -15,20 +17,21 @@ import java.util.List;
 
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.RepoViewHolder> {
 
-    class RepoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private TextView textViewName,textViewFullName,textViewDescription,textViewUrl;
+    class RepoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private TextView textViewTitle, textViewDescription;
+        private ImageView imageView;
 
         private RepoViewHolder(View itemView) {
             super(itemView);
-            textViewName = itemView.findViewById(R.id.textViewName);
-            textViewFullName = itemView.findViewById(R.id.textViewFullName);
+            textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
-            textViewUrl = itemView.findViewById(R.id.textViewUrl);
+            imageView = itemView.findViewById(R.id.imageView);
             itemView.setOnClickListener(this);
 
         }
-        public Item getmItem(int position){
-            Item repos=mItems.get(position);
+
+        public Item getmItem(int position) {
+            Item repos = mItems.get(position);
             return repos;
         }
 
@@ -44,7 +47,12 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.RepoVi
     private final LayoutInflater mInflater;
     private List<Item> mItems; // Cached copy of repos
     ItemClickListener mClickListener;
-    public ItemListAdapter(Context context) { mInflater = LayoutInflater.from(context); }
+    Context mContext;
+
+    public ItemListAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
+        mContext = context;
+    }
 
     @Override
     public RepoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -57,18 +65,19 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.RepoVi
     public void onBindViewHolder(RepoViewHolder holder, int position) {
         if (mItems != null) {
             Item current = mItems.get(position);
-            holder.textViewName.setText(current.getTitle());
-            holder.textViewFullName.setText(current.getTitle());
+            holder.textViewTitle.setText(current.getTitle());
+
             holder.textViewDescription.setText(current.getDescription());
-            holder.textViewUrl.setText(current.getTitle());
+
+            Glide.with(mContext).load(current.getImageHref()).into(holder.imageView);
 
         } else {
             // Covers the case of data not being ready yet.
-            holder.textViewName.setText("no data");
+            holder.textViewTitle.setText("no data");
         }
     }
 
-    public void setRepos(List<Item> repos){
+    public void setRepos(List<Item> repos) {
         mItems = repos;
         notifyDataSetChanged();
     }
@@ -81,6 +90,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.RepoVi
             return mItems.size();
         else return 0;
     }
+
     // allows clicks events to be caught
     public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;

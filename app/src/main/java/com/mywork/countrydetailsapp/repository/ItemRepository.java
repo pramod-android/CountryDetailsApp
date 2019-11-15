@@ -7,9 +7,10 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import com.mywork.countrydetailsapp.api.MyWebServices;
+import com.mywork.countrydetailsapp.dao.DataDao;
 import com.mywork.countrydetailsapp.dao.ItemDao;
 import com.mywork.countrydetailsapp.database.CountryRoomDatabase;
-import com.mywork.countrydetailsapp.entity.AboutCanada;
+import com.mywork.countrydetailsapp.entity.ServiceData;
 import com.mywork.countrydetailsapp.entity.Item;
 
 import java.util.List;
@@ -25,12 +26,17 @@ import static com.mywork.countrydetailsapp.constant.Constants.BASE_URL;
 public class ItemRepository {
     private ItemDao mItemDao;
     private LiveData<List<Item>> mAllItem;
-    private MyWebServices webservice;
+
+    private DataDao mDataDao;
+    private LiveData<List<ServiceData>> mAllData;
 
     public ItemRepository(Application application) {
         CountryRoomDatabase db = CountryRoomDatabase.getDatabase(application);
         mItemDao = db.itemDao();
+        mDataDao =db.dataDao();
+
         mAllItem = mItemDao.getAllItems();
+        mAllData=mDataDao.getAllData();
     }
 
     // Room executes all queries on a separate thread.
@@ -40,7 +46,12 @@ public class ItemRepository {
         return mAllItem;
     }
 
-    private void refreshData() {
+    public LiveData<List<ServiceData>> getAllData() {
+        return mAllData;
+    }
+
+
+    public void refreshData() {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -49,25 +60,25 @@ public class ItemRepository {
 
         MyWebServices webServices = retrofit.create(MyWebServices.class);
 
-        Call<AboutCanada> call = webServices.getAllData();
-        call.enqueue(new Callback<AboutCanada>() {
+        Call<ServiceData> call = webServices.getAllData();
+        call.enqueue(new Callback<ServiceData>() {
             @Override
-            public void onResponse(Call<AboutCanada> call, Response<AboutCanada> response) {
+            public void onResponse(Call<ServiceData> call, Response<ServiceData> response) {
 
-                AboutCanada data = response.body();
+                ServiceData data = response.body();
 
                 if(data!=null) {
                     List<Item> items = data.getItems();
                     if (items != null) {
                         if (items.size() > 0)
-                            insertItems(items);
+                            insertItems(items,data.getTitle());
                     }
                 }
 
             }
 
             @Override
-            public void onFailure(Call<AboutCanada> call, Throwable t) {
+            public void onFailure(Call<ServiceData> call, Throwable t) {
 
                 Log.i("ItemRepo",t.toString());
                 // Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -76,22 +87,31 @@ public class ItemRepository {
     }
 
 
-    public void insertItems(List<Item> items) {
-        new insertAsyncTask(mItemDao).execute(items);
+    public void insertItems(List<Item> items,String title) {
+        new insertAsyncTask(mItemDao,mDataDao,title).execute(items);
     }
 
 
     private static class insertAsyncTask extends AsyncTask<List<Item>, Void, Void> {
 
         private ItemDao mAsyncTaskDao;
+        private DataDao mAsyncTaskDataDao;
+        private  String mTitle;
 
-        insertAsyncTask(ItemDao dao) {
+        insertAsyncTask(ItemDao dao, DataDao dataDao,String title) {
             mAsyncTaskDao = dao;
+            mAsyncTaskDataDao=dataDao;
+            mTitle=title;
+
         }
 
         @Override
         protected Void doInBackground(final List<Item>... params) {
 
+
+            ServiceData data=new ServiceData();
+            data.setTitle(mTitle);
+            mAsyncTaskDataDao.insertData(data);
 
             for(Item item:params[0]) {
                 mAsyncTaskDao.insertItem(item);

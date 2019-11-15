@@ -7,11 +7,17 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.mywork.countrydetailsapp.R;
 import com.mywork.countrydetailsapp.entity.Item;
+import com.mywork.countrydetailsapp.entity.ServiceData;
 import com.mywork.countrydetailsapp.fragment.ItemsFragment;
 import com.mywork.countrydetailsapp.viewmodel.ItemViewModel;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ItemsFragment.OnItemFragmentInteractionListener {
     private ItemViewModel mItemViewModel;
@@ -40,10 +46,40 @@ public class MainActivity extends AppCompatActivity implements ItemsFragment.OnI
                 }
             }
         });
+        mItemViewModel.getAllData().observe(this, new Observer<List<ServiceData>>() {
+            @Override
+            public void onChanged(@Nullable List<ServiceData> data) {
+
+                if (data!=null)
+                if (data.size() > 0) {
+                    ServiceData serviceData = data.get(data.size() - 1);
+
+                    getSupportActionBar().setTitle(serviceData.getTitle());
+                }
+            }
+        });
     }
 
     @Override
     public void OnItemClick(Item item) {
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+               mItemViewModel.refData();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

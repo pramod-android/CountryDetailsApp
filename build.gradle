@@ -31,4 +31,5 @@ ext {
     coreTestingVersion = "2.1.0-rc01"
     materialVersion = '1.0.0'
     retrofitRxJavaGson = '2.3.0'
+    glide = '4.10.0'
 }
